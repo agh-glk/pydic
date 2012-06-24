@@ -39,6 +39,13 @@ class PyDicCreator(object):
         self.generate(input, args.target, name)
 
     def generate(self, from_source, to_path, name):
+
+        if os.path.exists(os.path.join(to_path, NAME_FILENAME)) or os.path.exists(os.path.join(to_path, NAME_FILENAME)) or os.path.exists(os.path.join(to_path, NAME_FILENAME)):
+            raise ConfigurationErrorException('Cowardly refusing to create dictionary in non empty directory')
+
+        if not os.path.exists(to_path):
+            os.makedirs(to_path)
+
         name_file = open(os.path.join(to_path, NAME_FILENAME), 'w')
         name_file.write(name.encode('utf-8') + '\n')
         name_file.close()
