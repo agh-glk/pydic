@@ -6,11 +6,18 @@ path with PyDic format dictionary.
 
 .. autoclass:: pydic.PyDic
 
+Word identification namespace
+-----------------------------
 
-PyDic internally uses identificators (which are Intgeres numbered from 1 to number of words). If you need to identify
-a given inflectional vector this is what you need to use. However querying dictionary can also be used in simplified way, that is without internal identificators. There is a method naming convention that can help you using this API. All methods starting with
-``word_`` prefix need as an argument a unicode string (a word) and will return also unicodes. Other methods starts with
-``id_`` prefix means that you will query dictionary using internal identificator.
+PyDic internally uses identificators (which are of integer type, numbered from 1 to total number of words). If you need to exactly identify
+a given inflectional vector this is what you need to use. However  dictionary can also be queried in simplified way, that is without using those internal identificators. There is a method naming convention that can help you distinguish which metods are ID-based and which one will simply take any word form (unicode) as an argument. All methods starting with
+``word_`` prefix need as an argument a unicode string (a word) and will return also list of unicodes. Other methods starts with ``id_`` prefix means that you will query dictionary using internal identificator.
+
+
+.. note::
+
+    All methods starting with ``word_`` prefix will return a list in first place. This is because, there can be more than one inflectional vector that can be matched to a given as an argument word form.
+
 
 .. warning::
 
@@ -44,7 +51,6 @@ Example::
 
     >> dic.id_forms(123643)
     [u'zamek',
-     u'zamek',
      u'zamka',
      u'zamkowi',
      u'zamek',
@@ -70,7 +76,6 @@ Example::
     >> dic.word_forms(u'zamek')
 
     [[u'zamek',
-      u'zamek',
       u'zamka',
       u'zamkowi',
       u'zamek',
@@ -124,7 +129,7 @@ Example::
 Example::
 
     >> dic.word_base(u'zamkowi')
-    [u'zamek', u'zamek', u'zamkowy']
+    [u'zamek', u'zamkowy']
 
 
 .. warning::
@@ -132,6 +137,6 @@ Example::
     As you can see there can be more than one inflectional vector that matches a given word. Therefore this function always
     return list of lists.
 
-.. warning::
+.. note::
 
-    Elements on that list can be NOT unique.
+    Elements on that list are unique.
