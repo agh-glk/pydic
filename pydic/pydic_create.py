@@ -38,7 +38,7 @@ class PyDicCreator(object):
         print >> sys.stderr , "Generating" , name, "dictionary"
         self.generate(input, args.target, name)
 
-    def generate(self, from_source, to_path, name):
+    def generate(self, from_source, to_path, name, verbose=True):
 
         if os.path.exists(os.path.join(to_path, NAME_FILENAME)) or os.path.exists(os.path.join(to_path, NAME_FILENAME)) or os.path.exists(os.path.join(to_path, NAME_FILENAME)):
             raise ConfigurationErrorException('Cowardly refusing to create dictionary in non empty directory')
@@ -63,10 +63,14 @@ class PyDicCreator(object):
             bits = filter(lambda x: x != "#", bits) #filtering non flectional
             if bits:
                 bits = [bits[0]] + bits[2:] # avoiding second element which is LABEL
+                #save format is <prefix>:bform suffix:form1 suffix:form2 suffix:form3 suffix....
+                #bform and form1 will usually be the same
 
                 bits_prefixed = self.common_prefix(bits)
                 wid = recno.append((':'.join(bits_prefixed)).encode('utf-8'))
-                print "[", wid, "]", bits[0]
+                if verbose:
+                    print "[", wid, "]", bits[0]
+
                 for bit in set(bits):
 
                     form = bit.encode('utf-8')

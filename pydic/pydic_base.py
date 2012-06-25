@@ -36,12 +36,12 @@ class PyDic(object):
 
         :param id: identificator
         :type id: integer
-        :return: list of unicode strings or ``None``
+        :return: list of unicode strings or empty list
         """
         try:
-            return self.decode_form(self.recno[id].decode('utf-8'))
+            return self.decode_form(self.recno[id].decode('utf-8'))[1:]
         except KeyError:
-            return None
+            return []
 
     def word_forms(self, word):
         """
@@ -51,8 +51,8 @@ class PyDic(object):
         :type word: unicode
         :return: list of lists of unicode strings or empty list
         """
-        word = word.encode('utf-8')
-        return map(lambda y : self.decode_form(y), map(lambda x: self.recno[x].decode('utf-8'), self.id(word)))
+
+        return map(lambda x: self.id_forms(x), self.id(word))
 
 
 
@@ -74,11 +74,10 @@ class PyDic(object):
         :type id: integer
         :return: unicode string or ``None``
         """
-        forms = self.id_forms(id)
-        if forms is None:
+        try:
+            return self.decode_form(self.recno[id].decode('utf-8'))[0]
+        except KeyError:
             return None
-        return forms[0]
-
 
     def word_base(self, word):
         """
@@ -88,8 +87,7 @@ class PyDic(object):
         :type word: unicode string
         :return: list of unicode strings or empty list
         """
-        forms = self.word_forms(word)
-        return map(lambda x: x[0], forms)
+        return list(set(map(lambda x: self.id_base(x), self.id(word))))
 
 
 
