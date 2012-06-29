@@ -59,12 +59,12 @@ class PyDicCreator(object):
         for line in from_source:
             bits = line.split(':')
             bits = map(lambda x: x.strip().decode('utf-8'), bits)
-            bits = filter(lambda x: x, bits)
             bits = filter(lambda x: x != "#", bits) #filtering non flectional
+            bits = [bits[0]] + bits[2:] # avoiding second element which is LABEL
+            #save format is <prefix>:bform suffix:form1 suffix:form2 suffix:form3 suffix....
+            #bform and form1 will usually be the same
+            bits = filter(lambda x: x, bits)
             if bits:
-                bits = [bits[0]] + bits[2:] # avoiding second element which is LABEL
-                #save format is <prefix>:bform suffix:form1 suffix:form2 suffix:form3 suffix....
-                #bform and form1 will usually be the same
 
                 bits_prefixed = self.common_prefix(bits)
                 wid = recno.append((':'.join(bits_prefixed)).encode('utf-8'))

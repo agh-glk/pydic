@@ -43,6 +43,8 @@ class TestPyDicBase(unittest.TestCase):
         self.assertEquals(self.dict1.word_forms(u"spodniach"),   [[u"spodnie", u"spodni", u"spodniom", u"spodnie", u"spodniami",u"spodniach", u"spodnie"]])
         self.assertEquals(self.dict1.word_forms(u"spodniachhhhhhhh"),   [])
 
+    def test_empty_label_word_forms(self):
+        self.assertEquals(self.dict1.word_forms(u"abakusem"),   [[u"abakus", u"abakusa" , u"abakusach", u"abakusami", u"abakusem", u"abakusie", u"abakusom", u"abakusowi", u"abakusów", u"abakusy"]])
 
     def test_id_base(self):
         self.assertEquals(self.dict1.id_base(2), u"pies")
