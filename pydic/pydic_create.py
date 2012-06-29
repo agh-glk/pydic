@@ -60,7 +60,7 @@ class PyDicCreator(object):
             bits = line.split(':')
             bits = map(lambda x: x.strip().decode('utf-8'), bits)
             bits = filter(lambda x: x != "#", bits) #filtering non flectional
-            bits = [bits[0]] + bits[2:] # avoiding second element which is LABEL
+            bits = bits[2:] # avoiding second element which is LABEL
             #save format is <prefix>:bform suffix:form1 suffix:form2 suffix:form3 suffix....
             #bform and form1 will usually be the same
             bits = filter(lambda x: x, bits)
@@ -73,7 +73,7 @@ class PyDicCreator(object):
 
                 for bit in set(bits):
 
-                    form = bit.encode('utf-8')
+                    form = bit.lower().encode('utf-8')
                     try:
                         hash[form] = "%s:%s" % (hash[form], str(wid))
                     except KeyError:

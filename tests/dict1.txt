@@ -18,3 +18,6 @@ pilot :  *ACAABAA:pilot:pilota:pilotowi:pilot:pilotem:pilocie:pilocie:piloty:pil
 
 płaszczyć : 	BCCA:płaszczyć:płaszczę:płaszczysz:płaszczy:płaszczymy:płaszczycie:płaszczą:płaszcz:##:płaszczmy:płaszczcie:##:płaszcząc:płaszczący:płaszczyłem:płaszczyłeś:płaszczył:płaszczyłam:płaszczyłaś:płaszczyła:płaszczyłom:płaszczyłoś:płaszczyło:płaszczyliśmy:płaszczyliście:płaszczyli:płaszczyłyśmy:płaszczyłyście:płaszczyły:płaszczyłbym:płaszczyłbyś:płaszczyłby:płaszczyłabym:płaszczyłabyś:płaszczyłaby:płaszczyłobym:płaszczyłobyś:płaszczyłoby:płaszczylibyśmy:płaszczylibyście:płaszczyliby:płaszczyłybyśmy:płaszczyłybyście:płaszczyłyby:płaszczono:płaszczony:płaszczywszy:
 abakus :  : abakus:abakusa:abakusach:abakusami:abakusem:abakusie:abakusom:abakusowi:abakusów:abakusy
+abakan :  : abakan:abakanach:abakanami:abakanem:abakanie
+Abakan :  : Abakan:Abakanem:Abakanie:Abakanowi:Abakanu
+Żoliborz::Żoliborz:Żoliborzowi:Żoliborzem

@@ -1,3 +1,5 @@
+# -*- coding: utf8 -*-
+
 class ConfigurationErrorException(Exception):
     pass
 
@@ -6,5 +8,8 @@ FORMS_HASH_FILENAME = 'forms.hash'
 FORMS_RECNO_FILENAME = 'forms.recno'
 
 
+from accents import Accents
 from pydic_base import PyDic
 from pydic_manager import PyDicManager
+
+

@@ -37,9 +37,9 @@ Format of input is very simple and assumes that in each line there is one word w
     Please note that in current version ``<grammatical label>`` is not used.
 
 
-.. note::
+.. warning::
 
-    ``<form 1>`` is always equal to ``<base form>`` as this is the first form in inflectional vector.
+    ``<form 1>`` always refers as ``<base form>`` as this is the first form in inflectional vector. In fact ``<base form>`` from the source file is never used in the dictionary itself. This can be used for some additional description of form vector.
 
 You can omit giving dictionary name if you ise ``-d`` argument. Name will be taken by default from dictionary filename (without ``.txt`` or ``.text``) extension. When you do not provide ``-d`` argument, and feed data from ``stdin`` argument ``-n`` is obligatory.
 
@@ -56,6 +56,11 @@ Program produces files into specified by argument ``-t`` (``--target``) director
  * ``forms.recno`` -- this file stores DB Berkeley Recno, which stores following mapping: ``id`` ``->`` ``"<prefix>:<suffix of form 1>:<suffix of form 2>: ... :<suffix of form n>"``
 
 
+.. warning::
+
+    All forms that are used as hash keys are lowercased before used. Forms that are saved in recno are in original case. This means that if you provide form vector like ``IBM:*:IBM:IBMu:IBMowi`` you need to make all queries using lowered case forms like ``ibmowi``, but as a result
+    you will get correct vector form ``[u'IBM', u'IBM', u'IBMowi']``. Quering for ``IBMowi`` will return empy result ``[]``.
+
 .. note::
 
     If argument ``-t`` (``--target``) is omitted, current directory will be used.
@@ -63,6 +68,7 @@ Program produces files into specified by argument ``-t`` (``--target``) director
 .. note::
 
     You are supposed never have to touch this internal data structures. This information is given only for your convenience.
+
 
 
 Afterwords

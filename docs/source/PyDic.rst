@@ -29,6 +29,7 @@ Example::
     dic = PyDic('/Users/cypreess/python_data/dic/gen12/')
 
 
+
 ``id`` method
 -------------
 
@@ -36,11 +37,12 @@ Example::
 
 Example::
 
-    >> dic.id(u'zamkowi')
+    >>> dic.id(u'zamkowi')
     [123643, 123644, 123802]
 
-    >> dic.id(u'zamek')
+    >>> dic.id(u'zamek')
     [123643, 123644]
+
 
 
 ``id_forms`` method
@@ -49,7 +51,7 @@ Example::
 
 Example::
 
-    >> dic.id_forms(123643)
+    >>> dic.id_forms(123643)
     [u'zamek',
      u'zamka',
      u'zamkowi',
@@ -73,7 +75,7 @@ Example::
 
 Example::
 
-    >> dic.word_forms(u'zamek')
+    >>> dic.word_forms(u'zamek')
 
     [[u'zamek',
       u'zamka',
@@ -111,6 +113,13 @@ Example::
     As you can see there can be more than one inflectional vector that matches a given word. Therefore this function always
     return list of lists.
 
+.. warning::
+
+    All forms that are used as hash keys are lowercased before used. Forms that are saved in recno are in original case. This means that if you provide form vector like ``IBM:*:IBM:IBMu:IBMowi`` you need to make all queries using lowered case forms like ``ibmowi``, but as a result
+    you will get correct vector form ``[u'IBM', u'IBM', u'IBMowi']``. Quering for ``IBMowi`` will return empy result ``[]``.
+
+
+
 ``id_base`` method
 ------------------
 
@@ -118,7 +127,7 @@ Example::
 
 Example::
 
-    >> dic.id_base(123643)
+    >>> dic.id_base(123643)
     u'zamek'
 
 ``word_base`` method
@@ -128,8 +137,15 @@ Example::
 
 Example::
 
-    >> dic.word_base(u'zamkowi')
+    >>> dic.word_base(u'zamkowi')
     [u'zamek', u'zamkowy']
+
+
+
+.. warning::
+
+    All forms that are used as hash keys are lowercased before used. Forms that are saved in recno are in original case. This means that if you provide form vector like ``IBM:*:IBM:IBMu:IBMowi`` you need to make all queries using lowered case forms like ``ibmowi``, but as a result
+    you will get correct vector form ``[u'IBM', u'IBM', u'IBMowi']``. Quering for ``IBMowi`` will return empy result ``[]``.
 
 
 .. warning::
@@ -140,3 +156,75 @@ Example::
 .. note::
 
     Elements on that list are unique.
+
+
+``a_id`` method
+---------------
+
+.. automethod:: pydic.PyDic.a_id
+
+Example::
+
+    >>> dic.id(u'pszczoly')
+    []
+    
+    >>> dic.a_id(u'pszczoly')
+    [81898]
+
+.. note::
+
+    Default mapping is defined in ``pydic.accents.AccentsTable.PL``
+
+.. warning::
+
+    This method works using ``pydic.Accents`` class which is capable of generating a list of all possible word variants
+    using given mapping from standard character to list of accent characters. Be warned that list of possibilities can be
+    very long as this is number of combinations from all replaceable characters.
+
+``a_word_forms`` method
+-----------------------
+
+.. automethod:: pydic.PyDic.a_word_forms
+
+Example::
+
+    >>> dic.word_forms(u'pszczoly')
+    []
+
+    >>> dic.a_word_forms(u'pszczoly')
+    [[u'pszczo\u0142a', u'pszczo\u0142y', u'pszczole', u'pszczo\u0142\u0119', u'pszczo\u0142\u0105', u'pszczole', u'pszczo\u0142o', u'pszczo\u0142y', u'pszcz\xf3\u0142', u'pszczo\u0142om', u'pszczo\u0142y', u'pszczo\u0142ami', u'pszczo\u0142ach', u'pszczo\u0142y']]
+
+
+.. note::
+
+    Default mapping is defined in ``pydic.accents.AccentsTable.PL``
+
+.. warning::
+
+    This method works using ``pydic.Accents`` class which is capable of generating a list of all possible word variants
+    using given mapping from standard character to list of accent characters. Be warned that list of possibilities can be
+    very long as this is number of combinations from all replaceable characters.
+
+``a_word_base`` method
+----------------------
+
+.. automethod:: pydic.PyDic.a_word_base
+
+Example::
+
+    >>> dic.word_base(u'pszczoly')
+    []
+
+    >>> dic.a_word_base(u'pszczoly')
+    [u'pszczo\u0142a']
+
+
+.. note::
+
+    Default mapping is defined in ``pydic.accents.AccentsTable.PL``
+
+.. warning::
+
+    This method works using ``pydic.Accents`` class which is capable of generating a list of all possible word variants
+    using given mapping from standard character to list of accent characters. Be warned that list of possibilities can be
+    very long as this is number of combinations from all replaceable characters.

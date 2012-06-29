@@ -36,10 +36,10 @@ In this way it is possible to use different words from different dictionaries in
 
 Example::
 
-    >>> dic.id(u'zamkowi')
+    >>>> dic.id(u'zamkowi')
     ['123643@gen12', '123644@gen12', '123802@gen12']
 
-    >>> dic.id(u'zamek')
+    >>>> dic.id(u'zamek')
     ['123643@gen12', '123644@gen12']
 
 
@@ -49,7 +49,7 @@ Example::
 
 Example::
 
-    >> dic.id_forms('123643@gen12')
+    >>> dic.id_forms('123643@gen12')
     [u'zamek',
      u'zamka',
      u'zamkowi',
@@ -73,7 +73,7 @@ Example::
 
 Example::
 
-    >> dic.word_forms(u'zamek')
+    >>> dic.word_forms(u'zamek')
 
     [[u'zamek',
       u'zamka',
@@ -106,6 +106,13 @@ Example::
       u'zamki']]
 
 
+
+.. warning::
+
+    All forms that are used as hash keys are lowercased before used. Forms that are saved in recno are in original case. This means that if you provide form vector like ``IBM:*:IBM:IBMu:IBMowi`` you need to make all queries using lowered case forms like ``ibmowi``, but as a result
+    you will get correct vector form ``[u'IBM', u'IBM', u'IBMowi']``. Quering for ``IBMowi`` will return empy result ``[]``.
+
+
 .. note::
 
     It is not possible to say which inflectional vector comes from which dictionary, as a returned list is flat. If you need this kind
@@ -124,7 +131,7 @@ Example::
 
 Example::
 
-    >> dic.id_base('123643@gen12')
+    >>> dic.id_base('123643@gen12')
     u'zamek'
 
 ``word_base`` method
@@ -134,8 +141,15 @@ Example::
 
 Example::
 
-    >> dic.word_base(u'zamkowi')
+    >>> dic.word_base(u'zamkowi')
     [u'zamek', u'zamkowy']
+
+
+
+.. warning::
+
+    All forms that are used as hash keys are lowercased before used. Forms that are saved in recno are in original case. This means that if you provide form vector like ``IBM:*:IBM:IBMu:IBMowi`` you need to make all queries using lowered case forms like ``ibmowi``, but as a result
+    you will get correct vector form ``[u'IBM', u'IBM', u'IBMowi']``. Quering for ``IBMowi`` will return empy result ``[]``.
 
 
 .. warning::

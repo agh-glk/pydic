@@ -1,5 +1,6 @@
 from bsddb3 import db
 import os
+from accents import AccentsTable, Accents
 
 from pydic import NAME_FILENAME, FORMS_HASH_FILENAME, FORMS_RECNO_FILENAME
 
@@ -16,6 +17,7 @@ class PyDic(object):
 
         self.recno = db.DB()
         self.recno.open(os.path.join(self.dic_path, FORMS_RECNO_FILENAME), dbtype=db.DB_RECNO)
+        self.accents = Accents()
 
     def id(self, word):
         """
@@ -30,6 +32,16 @@ class PyDic(object):
         except KeyError:
             return []
 
+    def a_id(self, word):
+        """
+        Accents agnostic version of method ``id()``
+        """
+        ids = set(self.id(word))
+        for w in self.accents.make_accents(word):
+            ids.update(self.id(w))
+        return list(ids)
+
+
     def id_forms(self, id):
         """
         Returns list of forms for a given identificator
@@ -39,7 +51,7 @@ class PyDic(object):
         :return: list of unicode strings or empty list
         """
         try:
-            return self.decode_form(self.recno[id].decode('utf-8'))[1:]
+            return self.decode_form(self.recno[id].decode('utf-8'))#[1:]
         except KeyError:
             return []
 
@@ -53,6 +65,14 @@ class PyDic(object):
         """
 
         return map(lambda x: self.id_forms(x), self.id(word))
+
+
+    def a_word_forms(self, word, mapping=AccentsTable.PL):
+        """
+        Accent agnostic version of word_forms method.
+        """
+
+        return map(lambda x: self.id_forms(x), self.a_id(word))
 
 
 
@@ -90,4 +110,8 @@ class PyDic(object):
         return list(set(map(lambda x: self.id_base(x), self.id(word))))
 
 
-
+    def a_word_base(self, word):
+        """
+        Accents agnostic version of ``word_base()`` method
+        """
+        return list(set(map(lambda x: self.id_base(x), self.a_id(word))))

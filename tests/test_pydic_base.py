@@ -31,6 +31,10 @@ class TestPyDicBase(unittest.TestCase):
         self.assertEquals(self.dict1.id(u'piloty'),  [11, 12])
         self.assertEquals(self.dict1.id(u'piloci'),  [10])
 
+    def test_a_id(self):
+        self.assertEquals(self.dict1.a_id(u'pszczoly'),   [4])
+
+
     def test_id_forms(self):
         self.assertEquals(self.dict1.id_forms(4),   [u"pszczoła", u"pszczoły" , u"pszczole", u"pszczołę", u"pszczołą", u"pszczole", u"pszczoło", u"pszczoły", u"pszczół", u"pszczołom", u"pszczoły", u"pszczołami", u"pszczołach", u"pszczoły",])
         self.assertEquals(self.dict1.id_forms(3),   [u"spodnie", u"spodni", u"spodniom", u"spodnie", u"spodniami",u"spodniach", u"spodnie"])
@@ -42,6 +46,13 @@ class TestPyDicBase(unittest.TestCase):
         self.assertEquals(self.dict1.word_forms(u"pszczołę"),   [[u"pszczoła", u"pszczoły" , u"pszczole", u"pszczołę", u"pszczołą", u"pszczole", u"pszczoło", u"pszczoły", u"pszczół", u"pszczołom", u"pszczoły", u"pszczołami", u"pszczołach", u"pszczoły",]])
         self.assertEquals(self.dict1.word_forms(u"spodniach"),   [[u"spodnie", u"spodni", u"spodniom", u"spodnie", u"spodniami",u"spodniach", u"spodnie"]])
         self.assertEquals(self.dict1.word_forms(u"spodniachhhhhhhh"),   [])
+
+    def test_a_word_forms(self):
+        self.assertEquals(self.dict1.a_word_forms(u"pszczole"),   [[u"pszczoła", u"pszczoły" , u"pszczole", u"pszczołę", u"pszczołą", u"pszczole", u"pszczoło", u"pszczoły", u"pszczół", u"pszczołom", u"pszczoły", u"pszczołami", u"pszczołach", u"pszczoły",]])
+        self.assertEquals(self.dict1.a_word_forms(u"spodniach"),   [[u"spodnie", u"spodni", u"spodniom", u"spodnie", u"spodniami",u"spodniach", u"spodnie"]])
+        self.assertEquals(self.dict1.a_word_forms(u"spodniachhhhhhhh"),   [])
+
+
 
     def test_empty_label_word_forms(self):
         self.assertEquals(self.dict1.word_forms(u"abakusem"),   [[u"abakus", u"abakusa" , u"abakusach", u"abakusami", u"abakusem", u"abakusie", u"abakusom", u"abakusowi", u"abakusów", u"abakusy"]])
@@ -56,4 +67,12 @@ class TestPyDicBase(unittest.TestCase):
         self.assertEquals(self.dict1.word_base(u"#"), [])
         self.assertEquals(self.dict1.word_base(u"pilotowi"), [u"pilot"])
 
+    def test_a_word_base(self):
+        self.assertEquals(self.dict1.a_word_base(u"psow"), [u"pies"])
+        self.assertEquals(self.dict1.a_word_base(u"spodniami"), [u"spodnie"])
+        self.assertEquals(self.dict1.a_word_base(u"#"), [])
+        self.assertEquals(self.dict1.a_word_base(u"pilotowi"), [u"pilot"])
 
+
+    def test_lowercase_hash(self):
+        self.assertEquals(self.dict1.word_base(u'żoliborzowi'), [u"Żoliborz"])
