@@ -10,5 +10,10 @@ setup(
     author_email='cypreess@gmail.com',
     description='Python inflectional dictionary',
     install_requires=['bsddb3'],
-    scripts=['pydic/pydic_create.py'],
+    scripts=[
+        'pydic/pydic_create.py',
+        'pydic/pydic_stemmer.py',
+        'scripts/clp2pydic',
+        'scripts/sjp2pydic',
+    ],
 )

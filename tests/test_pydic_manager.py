@@ -4,18 +4,20 @@ import os
 import tempfile
 import unittest
 from pydic.pydic_create import PyDicCreator
-from pydic_manager import PyDicManager
+from pydic import PyDicManager
+
 
 class TestPyDicBase(unittest.TestCase):
-
     def __init__(self, methodName='runTest'):
         self.current_dir = os.path.dirname(os.path.realpath(__file__))
         self.temp_dict1_path = tempfile.mkdtemp()
         self.temp_dict2_path = tempfile.mkdtemp()
-        self.dict1_file = open(os.path.join(self.current_dir,'dict1.txt'))
-        self.dict2_file = open(os.path.join(self.current_dir,'dict2.txt'))
-        PyDicCreator().generate(self.dict1_file, self.temp_dict1_path, 'dict1', verbose=False)
-        PyDicCreator().generate(self.dict2_file, self.temp_dict2_path, 'dict2', verbose=False)
+        self.dict1_file = open(os.path.join(self.current_dir, 'dict1.txt'))
+        self.dict2_file = open(os.path.join(self.current_dir, 'dict2.txt'))
+        PyDicCreator().generate(self.dict1_file, self.temp_dict1_path, 'dict1',
+                                verbose=False)
+        PyDicCreator().generate(self.dict2_file, self.temp_dict2_path, 'dict2',
+                                verbose=False)
 
         return super(TestPyDicBase, self).__init__(methodName)
 
@@ -34,8 +36,15 @@ class TestPyDicBase(unittest.TestCase):
 
     def test_id_forms(self):
         self.assertEquals(self.dict.id_forms('6@dict2'), self.dict.id_forms('1@dict1'))
-        self.assertEquals(self.dict.id_forms('4@dict1'), [u"pszczoła", u"pszczoły" , u"pszczole", u"pszczołę", u"pszczołą", u"pszczole", u"pszczoło", u"pszczoły", u"pszczół", u"pszczołom", u"pszczoły", u"pszczołami", u"pszczołach", u"pszczoły",])
-        self.assertEquals(self.dict.id_forms('8@dict2'), [u"spodnie", u"spodni", u"spodniom", u"spodnie", u"spodniami",u"spodniach", u"spodnie"])
+        self.assertEquals(self.dict.id_forms('4@dict1'),
+                          [u"pszczoła", u"pszczoły", u"pszczole", u"pszczołę",
+                           u"pszczołą", u"pszczoło",
+                           u"pszczół", u"pszczołom", u"pszczołami",
+                           u"pszczołach", ])
+        self.assertEquals(self.dict.id_forms('8@dict2'),
+                          [u"spodnie", u"spodni", u"spodniom", u"spodniami",
+                           u"spodniach",
+                          ])
         self.assertEquals(self.dict.id_forms('88888888@dict2'), [])
 
     def test_id_base(self):
@@ -45,12 +54,17 @@ class TestPyDicBase(unittest.TestCase):
         self.assertEquals(self.dict.id_base('88888888@dict2'), None)
 
     def test_word_forms(self):
-        self.assertEquals(self.dict.word_forms(u'psem'), [(u"pies", u"psa", u"psu", u"psa", u"psem", u"psie", u"psie", u"psy", u"psów", u"psom", u"psy", u"psami", u"psach", u"psy")])
+        self.assertEquals(self.dict.word_forms(u'psem'), [(u"pies", u"psa", u"psu",
+                                                           u"psem", u"psie",
+                                                           u"psy", u"psów",
+                                                           u"psom", u"psami",
+                                                           u"psach",)])
 
     def test_word_base(self):
         self.assertEquals(self.dict.word_base(u'psem'), [u"pies"])
         self.assertEquals(self.dict.word_base(u'pilotem'), [u"pilot"])
         self.assertEquals(self.dict.word_base(u'pilotemmmmmm'), [])
-        self.assertEquals(set(self.dict.word_base(u'płaszcz')), set([u"płaszczyć", u"płaszcz"]))
+        self.assertEquals(set(self.dict.word_base(u'płaszcz')),
+                          set([u"płaszczyć", u"płaszcz"]))
 
 

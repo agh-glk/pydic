@@ -1,23 +1,23 @@
 
-kot :  *ABABAB:kot:kota:kotu:kota:kotem:kocie:kocie:koty:kotów:kotom:koty:kotami:kotach:koty:
-pies :  *ABABAB:pies:psa:psu:psa:psem:psie:psie:psy:psów:psom:psy:psami:psach:psy:
-spodnie :  *AGCC:#:#:#:#:#:#:#:spodnie:spodni:spodniom:spodnie:spodniami:spodniach:spodnie:
+kot,kota,kotu,kota,kotem,kocie,kocie,koty,kotów,kotom,koty,kotami,kotach,koty,
+pies,psa,psu,psa,psem,psie,psie,psy,psów,psom,psy,psami,psach,psy,
+spodnie,spodni,spodniom,spodnie,spodniami,spodniach,spodnie,
 
-pszczoła : 	ADAAA:pszczoła:pszczoły:pszczole:pszczołę:pszczołą:pszczole:pszczoło:pszczoły:pszczół:pszczołom:pszczoły:pszczołami:pszczołach:pszczoły:
-bełkot : 	ACAAAAA:bełkot:bełkotu:bełkotowi:bełkot:bełkotem:bełkocie:bełkocie:bełkoty:bełkotów:bełkotom:bełkoty:bełkotami:bełkotach:bełkoty:
-łoskot : 	ACAAAAA:łoskot:łoskotu:łoskotowi:łoskot:łoskotem:łoskocie:łoskocie:łoskoty:łoskotów:łoskotom:łoskoty:łoskotami:łoskotach:łoskoty:
+pszczoła,pszczoły,pszczole,pszczołę,pszczołą,pszczole,pszczoło,pszczoły,pszczół,pszczołom,pszczoły,pszczołami,pszczołach,pszczoły,
+bełkot,bełkotu,bełkotowi,bełkot,bełkotem,bełkocie,bełkocie,bełkoty,bełkotów,bełkotom,bełkoty,bełkotami,bełkotach,bełkoty,
+łoskot,łoskotu,łoskotowi,łoskot,łoskotem,łoskocie,łoskocie,łoskoty,łoskotów,łoskotom,łoskoty,łoskotami,łoskotach,łoskoty,
 
-utrafienie : 	AEBAA:utrafienie:utrafienia:utrafieniu:utrafienie:utrafieniem:utrafieniu:utrafienie:utrafienia:utrafień:utrafieniom:utrafienia:utrafieniami:utrafieniach:utrafienia:
+utrafienie,utrafienia,utrafieniu,utrafienie,utrafieniem,utrafieniu,utrafienie,utrafienia,utrafień,utrafieniom,utrafienia,utrafieniami,utrafieniach,utrafienia,
 
-ultrafioletowy : 	CAB:ultrafioletowy:ultrafioletowego:ultrafioletowemu:ultrafioletowego:ultrafioletowym:ultrafioletowym:ultrafioletowy:ultrafioletowy:ultrafioletowego:ultrafioletowemu:ultrafioletowy:ultrafioletowym:ultrafioletowym:ultrafiole
+ultrafioletowy,ultrafioletowego,ultrafioletowemu,ultrafioletowego,ultrafioletowym,ultrafioletowym,ultrafioletowy,ultrafioletowy,ultrafioletowego,ultrafioletowemu,ultrafioletowy,ultrafioletowym,ultrafioletowym,ultrafiole
 
-autopilot :  *ACAABAA:autopilot:autopilota:autopilotowi:autopilot:autopilotem:autopilocie:autopilocie:autopiloty:autopilotów:autopilotom:autopiloty:autopilotami:autopilotach:autopiloty:
-pilot :  *AAADAA:pilot:pilota:pilotowi:pilota:pilotem:pilocie:pilocie:piloci:pilotów:pilotom:pilotów:pilotami:pilotach:piloci:
-pilot :  *ABABAAA:pilot:pilota:pilotowi:pilota:pilotem:pilocie:pilocie:piloty:pilotów:pilotom:piloty:pilotami:pilotach:piloty:
-pilot :  *ACAABAA:pilot:pilota:pilotowi:pilot:pilotem:pilocie:pilocie:piloty:pilotów:pilotom:piloty:pilotami:pilotach:piloty:
+autopilot,autopilota,autopilotowi,autopilot,autopilotem,autopilocie,autopilocie,autopiloty,autopilotów,autopilotom,autopiloty,autopilotami,autopilotach,autopiloty,
+pilot,pilota,pilotowi,pilota,pilotem,pilocie,pilocie,piloci,pilotów,pilotom,pilotów,pilotami,pilotach,piloci,
+pilot,pilota,pilotowi,pilota,pilotem,pilocie,pilocie,piloty,pilotów,pilotom,piloty,pilotami,pilotach,piloty,
+pilot,pilota,pilotowi,pilot,pilotem,pilocie,pilocie,piloty,pilotów,pilotom,piloty,pilotami,pilotach,piloty,
 
-płaszczyć : 	BCCA:płaszczyć:płaszczę:płaszczysz:płaszczy:płaszczymy:płaszczycie:płaszczą:płaszcz:##:płaszczmy:płaszczcie:##:płaszcząc:płaszczący:płaszczyłem:płaszczyłeś:płaszczył:płaszczyłam:płaszczyłaś:płaszczyła:płaszczyłom:płaszczyłoś:płaszczyło:płaszczyliśmy:płaszczyliście:płaszczyli:płaszczyłyśmy:płaszczyłyście:płaszczyły:płaszczyłbym:płaszczyłbyś:płaszczyłby:płaszczyłabym:płaszczyłabyś:płaszczyłaby:płaszczyłobym:płaszczyłobyś:płaszczyłoby:płaszczylibyśmy:płaszczylibyście:płaszczyliby:płaszczyłybyśmy:płaszczyłybyście:płaszczyłyby:płaszczono:płaszczony:płaszczywszy:
-abakus :  : abakus:abakusa:abakusach:abakusami:abakusem:abakusie:abakusom:abakusowi:abakusów:abakusy
-abakan :  : abakan:abakanach:abakanami:abakanem:abakanie
-Abakan :  : Abakan:Abakanem:Abakanie:Abakanowi:Abakanu
-Żoliborz::Żoliborz:Żoliborzowi:Żoliborzem
+płaszczyć,płaszczę,płaszczysz,płaszczy,płaszczymy,płaszczycie,płaszczą,płaszcz,płaszczmy,płaszczcie,płaszcząc,płaszczący,płaszczyłem,płaszczyłeś,płaszczył,płaszczyłam,płaszczyłaś,płaszczyła,płaszczyłom,płaszczyłoś,płaszczyło,płaszczyliśmy,płaszczyliście,płaszczyli,płaszczyłyśmy,płaszczyłyście,płaszczyły,płaszczyłbym,płaszczyłbyś,płaszczyłby,płaszczyłabym,płaszczyłabyś,płaszczyłaby,płaszczyłobym,płaszczyłobyś,płaszczyłoby,płaszczylibyśmy,płaszczylibyście,płaszczyliby,płaszczyłybyśmy,płaszczyłybyście,płaszczyłyby,płaszczono,płaszczony,płaszczywszy,
+abakus,abakusa,abakusach,abakusami,abakusem,abakusie,abakusom,abakusowi,abakusów,abakusy
+abakan,abakanach,abakanami,abakanem,abakanie
+Abakan,Abakanem,Abakanie,Abakanowi,Abakanu
+Żoliborz,Żoliborzowi,Żoliborzem
