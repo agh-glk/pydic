@@ -1,15 +1,14 @@
 PyDic - Single dictionary API
 =============================
 
-PyDic class is the most low-level API access to the dictionaries. It is responsible for reading a single
-path with PyDic format dictionary.
+PyDic class is the most low-level API access to the dictionaries. It is responsible for reading a single path with PyDic format dictionary.
 
 .. autoclass:: pydic.PyDic
 
 Word identification namespace
 -----------------------------
 
-PyDic internally uses identificators (which are of integer type, numbered from 1 to total number of words). If you need to exactly identify
+PyDic internally uses identificators (which are of `PyDicId` type, numbered from 1 to total number of words). If you need to exactly identify
 a given inflectional vector this is what you need to use. However  dictionary can also be queried in simplified way, that is without using those internal identificators. There is a method naming convention that can help you distinguish which metods are ID-based and which one will simply take any word form (unicode) as an argument. All methods starting with
 ``word_`` prefix need as an argument a unicode string (a word) and will return also list of unicodes. Other methods starts with ``id_`` prefix means that you will query dictionary using internal identificator.
 
@@ -21,7 +20,7 @@ a given inflectional vector this is what you need to use. However  dictionary ca
 
 .. warning::
 
-    Every single PyDic dictionary uses its own identificator namespace numbered from 1. If you want to use more than one dictionary in your program you should always use PyDicManager, as it introduces its own identificators namespacing, eg. ``1234@first_dic`` , ``1234@second_dict``. This will help you to avoid identificators clashing.
+    Every single PyDic dictionary uses its own identificator namespace numbered from 1 with concatenated dictionary name to it separated by `@` sign. This helps to avoid identificator name clashing if you want to use more than one dictionary in your program. Consider also using PyDicManager for managing multiple dictionaries at the same time
 
 Example::
 
@@ -38,10 +37,10 @@ Example::
 Example::
 
     >>> dic.id(u'zamkowi')
-    [123643, 123644, 123802]
+    [PyDicId(u'187274@sjp'), PyDicId(u'187275@sjp'), PyDicId(u'187358@sjp')]
 
     >>> dic.id(u'zamek')
-    [123643, 123644]
+    [PyDicId(u'187274@sjp'), PyDicId(u'187275@sjp')]
 
 
 
@@ -51,21 +50,8 @@ Example::
 
 Example::
 
-    >>> dic.id_forms(123643)
-    [u'zamek',
-     u'zamka',
-     u'zamkowi',
-     u'zamek',
-     u'zamkiem',
-     u'zamku',
-     u'zamku',
-     u'zamki',
-     u'zamk\xf3w',
-     u'zamkom',
-     u'zamki',
-     u'zamkami',
-     u'zamkach',
-     u'zamki']
+    >>> dic.id_forms(u'187274@sjp')
+    [u'zamek', u'zamka', u'zamkach', u'zamkami', u'zamki', u'zamkiem', u'zamkom', u'zamkowi', u'zamk\xf3w', u'zamku']
 
 
 ``word_forms`` method
@@ -76,36 +62,7 @@ Example::
 Example::
 
     >>> dic.word_forms(u'zamek')
-
-    [[u'zamek',
-      u'zamka',
-      u'zamkowi',
-      u'zamek',
-      u'zamkiem',
-      u'zamku',
-      u'zamku',
-      u'zamki',
-      u'zamk\xf3w',
-      u'zamkom',
-      u'zamki',
-      u'zamkami',
-      u'zamkach',
-      u'zamki'],
-     [u'zamek',
-      u'zamek',
-      u'zamku',
-      u'zamkowi',
-      u'zamek',
-      u'zamkiem',
-      u'zamku',
-      u'zamku',
-      u'zamki',
-      u'zamk\xf3w',
-      u'zamkom',
-      u'zamki',
-      u'zamkami',
-      u'zamkach',
-      u'zamki']]
+    [[u'zamek', u'zamka', u'zamkach', u'zamkami', u'zamki', u'zamkiem', u'zamkom', u'zamkowi', u'zamk\xf3w', u'zamku'], [u'zamek', u'zamkach', u'zamkami', u'zamki', u'zamkiem', u'zamkom', u'zamkowi', u'zamk\xf3w', u'zamku']]
 
 
 .. warning::
