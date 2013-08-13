@@ -16,10 +16,11 @@ class PyDic(object):
     INTERNAL_DELIMITER = ':'
 
     def __init__(self, path):
-        if os.path.isdir(path):
-            self.read_pydic_index(path)
-        elif os.path.isfile(path):
-            self.make_memory_pydic_index(path)
+        self.path = path
+        if os.path.isdir(self.path):
+            self.read_pydic_index(self.path)
+        elif os.path.isfile(self.path):
+            self.make_memory_pydic_index(self.path)
         else:
             raise RuntimeError("Wrong pydic input resource")
         self.accents = Accents()
@@ -28,6 +29,12 @@ class PyDic(object):
     def __iter__(self):
         return iter(xrange(1, len(self.recno) + 1))
 
+    def get_path(self, join_with=None):
+
+        if join_with:
+            return os.path.join(self.path, join_with)
+        else:
+            return self.path
 
     def id(self, word):
         """

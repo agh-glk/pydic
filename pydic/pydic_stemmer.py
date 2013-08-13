@@ -3,6 +3,7 @@
 import argparse
 from genericpath import commonprefix
 from itertools import imap, izip, ifilter
+import os
 import sys
 from pydic import PyDic
 import marisa_trie
@@ -10,6 +11,8 @@ import marisa_trie
 
 class PydicStemmer(object):
     MIN_SUFFIX = 3
+    INDEX_FILENAME = 'stemmer.index'
+    MARISA_FORMAT = '<I'
 
     def run(self):
         """
@@ -33,30 +36,38 @@ class PydicStemmer(object):
                             help="filename to process", nargs='?')
         args = parser.parse_args()
 
-        input = sys.stdin
+        input_stream = sys.stdin
         if args.input:
-            input = open(args.input)
+            input_stream = open(args.input)
 
-        output = sys.stdout
+        output_stream = sys.stdout
         if args.output:
-            output = open(args.output, 'w')
+            output_stream = open(args.output, 'w')
 
         self.dictionary = PyDic(args.dictionary_file)
-        self.index = self.build_index(self.dictionary)
+        self.index = self.load_index(self.dictionary)
 
-        for line in input:
-
+        for line in input_stream:
             line = line.decode('utf-8').strip()
             if line and line[0] != '#':
-                print >> output, args.delimiter.join(
+                print >> output_stream, args.delimiter.join(
                     self.process(self.dictionary, self.index, line,
                                  debug=args.verbose)).encode('utf-8')
             else:
-                print >> output, line.encode('utf-8')
+                print >> output_stream, line.encode('utf-8')
+
+    def load_index(self, dictionary):
+        if os.path.isfile(dictionary.get_path(PydicStemmer.INDEX_FILENAME)):
+            index = marisa_trie.RecordTrie(PydicStemmer.MARISA_FORMAT)
+            index.load(dictionary.get_path(PydicStemmer.INDEX_FILENAME))
+        else:
+            index = self.build_index(dictionary)
+            index.save(dictionary.get_path(PydicStemmer.INDEX_FILENAME))
+        return index
 
     def build_index(self, dictionary):
         return marisa_trie.RecordTrie(
-            '<I',
+            PydicStemmer.MARISA_FORMAT,
             ifilter(
                 lambda t: t[0].find(' ') == -1,
                 izip(
