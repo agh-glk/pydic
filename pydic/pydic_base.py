@@ -1,12 +1,62 @@
 from collections import OrderedDict
+from itertools import imap
 import os
 import sys
-
 from bsddb3 import db
-
 from accents import AccentsTable, Accents
 from pydic import NAME_FILENAME, FORMS_HASH_FILENAME, FORMS_RECNO_FILENAME, ConfigurationErrorException
 
+
+class PyDicId(object):
+    def __init__(self, ident=None, dict_name=None):
+        if (type(ident) == str or type(ident) == unicode) and dict_name is None:
+            self.id, self.dict = self.parse_text_ident(ident)
+        elif ident is not None and dict_name is not None:
+            self.id = int(ident)
+            self.dict = unicode(dict_name)
+        else:
+            raise ValueError('Cannot create valid PyDic ID')
+
+    def parse_text_ident(self, text_ident):
+        ident, dictionary = unicode(text_ident).split('@')
+        return (int(ident), dictionary)
+
+    def __repr__(self):
+        return "%s(%s)" % (self.__class__.__name__, repr(unicode(self)))
+
+    def __str__(self):
+        return "%d@%s" % (self.id, self.dict)
+
+    def __unicode__(self):
+        return u"%d@%s" % (self.id, self.dict)
+
+    def __eq__(self, other):
+        if type(other) == self.__class__:
+            return self.dict == other.dict and self.id == other.id
+        elif type(other) == str or type(other) == unicode:
+            other = PyDicId(other)
+            return self.dict == other.dict and self.id == other.id
+        else:
+            raise NotImplemented()
+
+    def __hash__(self):
+        return hash(unicode(self))
+
+
+def require_valid_pydic_id(method):
+    # do something that requires view's class
+    def decorated(self, pydic_id):
+        if type(pydic_id) == PyDicId:
+            if not pydic_id.dict == self.name:
+                raise ValueError('PyDic ID from different dictionary')
+        elif type(pydic_id) in (str, unicode):
+            pydic_id = PyDicId(pydic_id)
+        elif type(pydic_id) == int:
+            pydic_id = PyDicId(pydic_id, self.name)
+        else:
+            pydic_id = PyDicId(pydic_id)
+        return method(self, pydic_id)
+    return decorated
 
 class PyDic(object):
     """
@@ -27,7 +77,7 @@ class PyDic(object):
 
 
     def __iter__(self):
-        return iter(xrange(1, len(self.recno) + 1))
+        return imap(lambda i: PyDicId(i, self.name), xrange(1, len(self.recno) + 1))
 
     def is_inmemory(self):
         return os.path.isfile(self.path)
@@ -48,8 +98,9 @@ class PyDic(object):
         :return: list of integers or empty list
         """
         try:
-            return map(lambda x: int(x),
-                       self.hash[word.encode('utf-8')].split(PyDic.INTERNAL_DELIMITER))
+            return map(lambda x: PyDicId(int(x), self.name),
+                       self.hash[word.lower().encode('utf-8')].split(
+                           PyDic.INTERNAL_DELIMITER))
         except KeyError:
             return []
 
@@ -58,21 +109,21 @@ class PyDic(object):
         Accents agnostic version of method ``id()``
         """
         ids = set(self.id(word))
-        for w in self.accents.make_accents(word):
+        for w in self.accents.make_accents(word.lower()):
             ids.update(self.id(w))
         return list(ids)
 
-
-    def id_forms(self, id):
+    @require_valid_pydic_id
+    def id_forms(self, pydic_id):
         """
         Returns list of forms for a given identificator
 
-        :param id: identificator
-        :type id: integer
+        :param pydic_id: identificator
+        :type pydic_id: integer
         :return: list of unicode strings or empty list
         """
         try:
-            return self.decode_form(self.recno[id].decode('utf-8'))#[1:]
+            return self.decode_form(self.recno[pydic_id.id].decode('utf-8'))
         except KeyError:
             return []
 
@@ -106,16 +157,18 @@ class PyDic(object):
         bits = string.split(PyDic.INTERNAL_DELIMITER)
         return map(lambda x: bits[0] + x, bits[1:])
 
-    def id_base(self, id):
+    @require_valid_pydic_id
+    def id_base(self, pydic_id):
         """
         Returns a base form of word given as identificator
 
-        :param id: word identificator
-        :type id: integer
+        :param pydic_id: word identificator
+        :type pydic_id: integer
         :return: unicode string or ``None``
         """
+
         try:
-            return self.decode_form(self.recno[id].decode('utf-8'))[0]
+            return self.decode_form(self.recno[pydic_id.id].decode('utf-8'))[0]
         except KeyError:
             return None
 

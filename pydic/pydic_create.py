@@ -44,8 +44,8 @@ class PyDicCreator(object):
             target = "%s.%s" % (name, PyDic.DIR_EXTENSION)
         else:
             target = args.target
-
-        print >> sys.stderr, "Generating", name, "dictionary in folder", target
+        if args.verbose:
+            print >> sys.stderr, "Generating", name, "dictionary in folder", target
         self.generate(input, target, name, delimiter=args.delimiter,
                       verbose=args.verbose)
 

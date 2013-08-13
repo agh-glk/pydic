@@ -7,7 +7,7 @@ from pydic.pydic_create import PyDicCreator
 from pydic import PyDicManager
 
 
-class TestPyDicBase(unittest.TestCase):
+class TestPyDicManager(unittest.TestCase):
     def __init__(self, methodName='runTest'):
         self.current_dir = os.path.dirname(os.path.realpath(__file__))
         self.temp_dict1_path = tempfile.mkdtemp()
@@ -19,7 +19,7 @@ class TestPyDicBase(unittest.TestCase):
         PyDicCreator().generate(self.dict2_file, self.temp_dict2_path, 'dict2',
                                 verbose=False)
 
-        return super(TestPyDicBase, self).__init__(methodName)
+        return super(TestPyDicManager, self).__init__(methodName)
 
     def setUp(self):
         self.dict = PyDicManager(self.temp_dict1_path, self.temp_dict2_path)
@@ -68,3 +68,5 @@ class TestPyDicBase(unittest.TestCase):
                           set([u"płaszczyć", u"płaszcz"]))
 
 
+    def test_pydic_id_formats(self):
+        self.assertRaises(ValueError, self.dict.id_forms, 88888888)

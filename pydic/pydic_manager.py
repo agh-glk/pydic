@@ -1,7 +1,15 @@
-import os
+from pydic import PyDic, PyDicId
 
-from pydic import NAME_FILENAME
-from pydic import PyDic
+
+def require_valid_pydic_id(method):
+    def decorated(self, pydic_id):
+        if type(pydic_id) == PyDicId:
+            if not self.dictionaries.has_key(pydic_id.dict):
+                raise ValueError('PyDic ID from unknown dictionary')
+        else:
+            pydic_id = PyDicId(pydic_id)
+        return method(self, pydic_id)
+    return decorated
 
 class PyDicManager(object):
     """
@@ -13,7 +21,6 @@ class PyDicManager(object):
         for path in args:
             self.load_dictionary(path)
 
-
     def get_dictionaries(self):
         return self.dictionaries.keys()
 
@@ -21,15 +28,7 @@ class PyDicManager(object):
         dic = PyDic(path)
         self.dictionaries[dic.name] = dic
 
-
-    def parse_full_id(self, full_id):
-        id, dic = full_id.split('@')
-        return (int(id), dic)
-
-    def make_full_id(self, id, dic_name):
-        return "%d@%s" % (id, dic_name)
-
-    def id (self, word):
+    def id(self, word):
         """
         Returns all known id for a word from every dictionary
 
@@ -39,34 +38,34 @@ class PyDicManager(object):
         """
         result = []
         for dic_name in self.dictionaries.keys():
-            result += map(lambda x: self.make_full_id(x, dic_name), self.dictionaries[dic_name].id(word))
+            result += self.dictionaries[dic_name].id(word)
         return result
 
-    def id_forms(self, full_id):
+    @require_valid_pydic_id
+    def id_forms(self, pydic_id):
         """
         Returns forms vector for a full_id
 
-        :param full_id: word full id
-        :type full_id: str
+        :param pydic_id: word full id
+        :type pydic_id: str
         :return: list of unicode forms or empty list
         """
         try:
-            id, dic = self.parse_full_id(full_id)
-            return self.dictionaries[dic].id_forms(id)
+            return self.dictionaries[pydic_id.dict].id_forms(pydic_id)
         except (ValueError, KeyError):
-                  return None
+            return None
 
-    def id_base(self, full_id):
+    @require_valid_pydic_id
+    def id_base(self, pydic_id):
         """
         Returns base form for a full id
 
-        :param full_id: word full id
-        :type full_id: str
+        :param pydic_id: word full id
+        :type pydic_id: str
         :return: word base form as unicode or None
         """
         try:
-            id, dic = self.parse_full_id(full_id)
-            return self.dictionaries[dic].id_base(int(id))
+            return self.dictionaries[pydic_id.dict].id_base(pydic_id)
         except (ValueError, KeyError):
             return None
 
@@ -83,7 +82,6 @@ class PyDicManager(object):
         result = set()
         for dic_name in self.dictionaries.keys():
             for vector in self.dictionaries[dic_name].word_forms(word):
-
                 result.add(tuple(vector))
         return filter(lambda x: len(x), result)
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 import argparse
+from collections import OrderedDict
 from genericpath import commonprefix
 from itertools import imap, izip, ifilter
 import os
@@ -74,7 +75,7 @@ class PydicStemmer(object):
                 lambda t: t[0].find(' ') == -1,
                 izip(
                     imap(lambda i: dictionary.id_base(i)[::-1].lower(), dictionary),
-                    imap(lambda i: (i,), dictionary),
+                    imap(lambda i: (i.id,), dictionary),
                 )
             )
         )
@@ -82,8 +83,10 @@ class PydicStemmer(object):
     def inflect(self, vector, word):
         suffix = commonprefix([vector[0][::-1], word[::-1]])
         prefix = word[:-len(suffix)]
-        prefix_len = len(vector[0][:-len(suffix)])
-        return map(lambda w: prefix + w[prefix_len:], vector)
+
+        bform_prefix = vector[0][:-len(suffix)]
+        bform_prefix_len = len(vector[0][:-len(suffix)])
+        return map(lambda w: prefix + w[bform_prefix_len:], filter(lambda ww: ww.startswith(bform_prefix) ,vector)) #check if word prefix is the same in all forms
 
     def find_base_word(self, index, word, debug=False):
         reversed_word = word[::-1].lower()
@@ -93,11 +96,23 @@ class PydicStemmer(object):
                 if debug:
                     print >> sys.stderr, '%s =~ %s(%d), %d match' % (
                         word, reversed_word[::-1], len(reversed_word), len(k))
+                    print >> sys.stderr, map(lambda x: x[::-1] , k)
+
                 return index[k[0]][0][0], k[0][::-1]
             reversed_word = reversed_word[:-1]
         return None
 
     def process(self, dictionary, index, word, debug=False):
+        if dictionary.id(word):
+            forms = filter(lambda v: v[0] == word, dictionary.word_forms(word))
+            if forms:
+                if debug:
+                    print >> sys.stderr, "%s found in dictionary, %d match" % (word, len(
+                        dictionary.id(word)))
+
+                # this flatten the forms list and then makes stable unique
+                return OrderedDict.fromkeys([item for sublist in forms for item in sublist]).keys()
+
         bword = self.find_base_word(index, word, debug=debug)
         if debug:
             if bword is None:
