@@ -57,12 +57,14 @@ class PydicStemmer(object):
                 print >> output_stream, line.encode('utf-8')
 
     def load_index(self, dictionary):
-        if os.path.isfile(dictionary.get_path(PydicStemmer.INDEX_FILENAME)):
+        if not dictionary.is_inmemory() and os.path.isfile(
+                dictionary.get_path(PydicStemmer.INDEX_FILENAME)):
             index = marisa_trie.RecordTrie(PydicStemmer.MARISA_FORMAT)
             index.load(dictionary.get_path(PydicStemmer.INDEX_FILENAME))
         else:
             index = self.build_index(dictionary)
-            index.save(dictionary.get_path(PydicStemmer.INDEX_FILENAME))
+            if not dictionary.is_inmemory():
+                index.save(dictionary.get_path(PydicStemmer.INDEX_FILENAME))
         return index
 
     def build_index(self, dictionary):

@@ -12,15 +12,15 @@ class PyDic(object):
     """
     Abstraction layer for accessing single dictionary
     """
-
+    DIR_EXTENSION = 'pydic'
     INTERNAL_DELIMITER = ':'
 
     def __init__(self, path):
         self.path = path
-        if os.path.isdir(self.path):
-            self.read_pydic_index(self.path)
+        if os.path.isdir(self.get_path()):
+            self.read_pydic_index(self.get_path())
         elif os.path.isfile(self.path):
-            self.make_memory_pydic_index(self.path)
+            self.make_memory_pydic_index(self.get_path())
         else:
             raise RuntimeError("Wrong pydic input resource")
         self.accents = Accents()
@@ -28,6 +28,9 @@ class PyDic(object):
 
     def __iter__(self):
         return iter(xrange(1, len(self.recno) + 1))
+
+    def is_inmemory(self):
+        return os.path.isfile(self.path)
 
     def get_path(self, join_with=None):
 
@@ -150,7 +153,8 @@ class PyDic(object):
     def make_memory_pydic_index(self, from_source, name=None, delimiter=',',
                                 verbose=False):
         self.hash, self.recno = PyDic.make_pydic_index(from_source=open(from_source),
-                                                       to_path=None, name=name,
+                                                       to_path=None,
+                                                       name=name,
                                                        delimiter=delimiter,
                                                        verbose=verbose)
 

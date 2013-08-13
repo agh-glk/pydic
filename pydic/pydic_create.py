@@ -18,7 +18,7 @@ class PyDicCreator(object):
         parser.add_argument('-f', '--dictionary-file',
                             help="path to file with text dictionary")
         parser.add_argument('-t', '--target', help="path to target dictionary directory",
-                            default=".")
+                            default=None)
 
         parser.add_argument('-n', '--name',
                             help="name of newly created dictionary (default same as text file)")
@@ -40,15 +40,22 @@ class PyDicCreator(object):
             if name.endswith('.txt') or name.endswith('.text'):
                 name = '.'.join(name.split('.')[0:-1])
 
-        print >> sys.stderr, "Generating", name, "dictionary"
-        self.generate(input, args.target, name, delimiter=args.delimiter,
+        if args.target is None:
+            target = "%s.%s" % (name, PyDic.DIR_EXTENSION)
+        else:
+            target = args.target
+
+        print >> sys.stderr, "Generating", name, "dictionary in folder", target
+        self.generate(input, target, name, delimiter=args.delimiter,
                       verbose=args.verbose)
 
     def generate(self, from_source, to_path, name, delimiter=',', verbose=False):
 
         dbhash, dbrecno = PyDic.make_pydic_index(from_source=from_source,
-                                                 to_path=to_path, name=name,
-                                                 delimiter=delimiter, verbose=verbose)
+                                                 to_path=to_path,
+                                                 name=name,
+                                                 delimiter=delimiter,
+                                                 verbose=verbose)
 
         dbhash.close()
         dbrecno.close()
