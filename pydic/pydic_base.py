@@ -8,6 +8,12 @@ from pydic import NAME_FILENAME, FORMS_HASH_FILENAME, FORMS_RECNO_FILENAME, Conf
 
 
 class PyDicId(object):
+    """
+    Dictionary lexem identifier. Build from sequential number (an id) and
+    dictionary name concatenated with '@' sign, eg. '123@sjp'
+    """
+    SEPARATOR = '@'
+
     def __init__(self, ident=None, dict_name=None):
         if (type(ident) == str or type(ident) == unicode) and dict_name is None:
             self.id, self.dict = self.parse_text_ident(ident)
@@ -18,17 +24,17 @@ class PyDicId(object):
             raise ValueError('Cannot create valid PyDic ID')
 
     def parse_text_ident(self, text_ident):
-        ident, dictionary = unicode(text_ident).split('@')
+        ident, dictionary = unicode(text_ident).split(PyDicId.SEPARATOR)
         return (int(ident), dictionary)
 
     def __repr__(self):
         return "%s(%s)" % (self.__class__.__name__, repr(unicode(self)))
 
     def __str__(self):
-        return "%d@%s" % (self.id, self.dict)
+        return "%d%s%s" % (self.id, PyDicId.SEPARATOR, self.dict)
 
     def __unicode__(self):
-        return u"%d@%s" % (self.id, self.dict)
+        return u"%d%s%s" % (self.id, PyDicId.SEPARATOR, self.dict)
 
     def __eq__(self, other):
         if type(other) == self.__class__:
@@ -56,7 +62,11 @@ def require_valid_pydic_id(method):
         else:
             pydic_id = PyDicId(pydic_id)
         return method(self, pydic_id)
+
+    decorated.__doc__ = method.__doc__
+    decorated.__repr__ = method.__repr__
     return decorated
+
 
 class PyDic(object):
     """
@@ -80,6 +90,10 @@ class PyDic(object):
         return imap(lambda i: PyDicId(i, self.name), xrange(1, len(self.recno) + 1))
 
     def is_inmemory(self):
+        """
+        Checks if dictionary is in in-memory only mode. It is needed by other modules
+        willing to write some intermediate file structures to pydic folder.
+        """
         return os.path.isfile(self.path)
 
     def get_path(self, join_with=None):
@@ -89,65 +103,73 @@ class PyDic(object):
         else:
             return self.path
 
-    def id(self, word):
+    def id(self, form):
         """
-        Returns a list of identificators that can be matched for given word form
+        Returns a list of PyDicId that match a given word form
 
-        :param word: word form
-        :type word: unicode
-        :return: list of integers or empty list
+        :param form: word form
+        :type form: unicode
+        :return: list of PyDicId or empty list
         """
         try:
             return map(lambda x: PyDicId(int(x), self.name),
-                       self.hash[word.lower().encode('utf-8')].split(
+                       self.hash[form.lower().encode('utf-8')].split(
                            PyDic.INTERNAL_DELIMITER))
         except KeyError:
             return []
 
-    def a_id(self, word):
+    def a_id(self, form):
         """
         Accents agnostic version of method ``id()``
+
+        :param form: form
+        :type form: unicode
+        :return: list of PyDicId or empty list
         """
-        ids = set(self.id(word))
-        for w in self.accents.make_accents(word.lower()):
+        ids = set(self.id(form))
+        for w in self.accents.make_accents(form.lower()):
             ids.update(self.id(w))
         return list(ids)
 
     @require_valid_pydic_id
     def id_forms(self, pydic_id):
         """
-        Returns list of forms for a given identificator
+        Returns list of forms for a given PyDicId
 
-        :param pydic_id: identificator
-        :type pydic_id: integer
+        :param pydic_id: PyDicId or string id
+        :type pydic_id: PyDicId, string
         :return: list of unicode strings or empty list
         """
         try:
-            return self.decode_form(self.recno[pydic_id.id].decode('utf-8'))
+            return self.__decode_form(self.recno[pydic_id.id].decode('utf-8'))
         except KeyError:
             return []
 
-    def word_forms(self, word):
+    def word_forms(self, form):
         """
-        Returns list of list of forms for a given word
+        Returns list of list of forms for a given form
 
-        :param word: word form
-        :type word: unicode
+        :param form: word form
+        :type form: unicode
         :return: list of lists of unicode strings or empty list
         """
 
-        return map(lambda x: self.id_forms(x), self.id(word))
+        return map(lambda x: self.id_forms(x), self.id(form))
 
 
-    def a_word_forms(self, word, mapping=AccentsTable.PL):
+    def a_word_forms(self, form, mapping=AccentsTable.PL):
         """
         Accent agnostic version of word_forms method.
+
+        :param form: word form
+        :type form: unicode
+        :return: list of lists of unicode strings or empty list
         """
 
-        return map(lambda x: self.id_forms(x), self.a_id(word))
+        return map(lambda x: self.id_forms(x), self.a_id(form))
 
 
-    def decode_form(self, string):
+    def __decode_form(self, string):
         """
         Internal function to decode string format stored in Recno
 
@@ -160,34 +182,38 @@ class PyDic(object):
     @require_valid_pydic_id
     def id_base(self, pydic_id):
         """
-        Returns a base form of word given as identificator
+        Returns a base form of word given as PyDicId
 
-        :param pydic_id: word identificator
-        :type pydic_id: integer
+        :param pydic_id: PyDicId
+        :type pydic_id: PyDicId, string
         :return: unicode string or ``None``
         """
 
         try:
-            return self.decode_form(self.recno[pydic_id.id].decode('utf-8'))[0]
+            return self.__decode_form(self.recno[pydic_id.id].decode('utf-8'))[0]
         except KeyError:
             return None
 
-    def word_base(self, word):
+    def word_base(self, form):
         """
-        Returns a list of base forms of word
+        Returns a list of base forms of form
 
-        :param word: word form
-        :type word: unicode string
+        :param form: word form
+        :type form: unicode string
         :return: list of unicode strings or empty list
         """
-        return list(set(map(lambda x: self.id_base(x), self.id(word))))
+        return list(set(map(lambda x: self.id_base(x), self.id(form))))
 
 
-    def a_word_base(self, word):
+    def a_word_base(self, form):
         """
         Accents agnostic version of ``word_base()`` method
+
+        :param form: word form
+        :type form: unicode string
+        :return: list of unicode strings or empty list
         """
-        return list(set(map(lambda x: self.id_base(x), self.a_id(word))))
+        return list(set(map(lambda x: self.id_base(x), self.a_id(form))))
 
 
     def read_pydic_index(self, dic_path):

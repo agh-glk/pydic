@@ -1,10 +1,8 @@
 PyDicManager - Multiple dictionary API
 ======================================
 
-PyDicManager is a class that provides single and clean way to manage multiple dictionaries at the same time.
-Constructor method requires paths of all dictionaries that will be used, but after initialisation dictionaries
-will be referred by theirs names rather then paths. In fact, dictionary location (path) only matters on loading stage.
-Therefore, you can easily move your dictionaries to different place in filesystem as far as you only remember to point
+PyDicManager is a class that provides single and clean way to manage multiple dictionaries at the same time. Constructor method requires paths of all dictionaries that will be used, but after initialisation dictionaries
+will be referred by theirs names rather then paths. In fact, dictionary location (path) only matters on loading stage. Therefore, you can easily move your dictionaries to different place in filesystem as far as you only remember to point
 correct path when loading dictionary. Without changing an internal name of a dictionary (which is stored in file ``.pydoc``,
 not in a name of a directory) no references of word identificators will be broken.
 
@@ -15,19 +13,16 @@ As arguments simple define dictionary paths you want to load.
 Word identification namespace
 -----------------------------
 
-In difference to PyDic class, PyDicManager provide its own word identification namespace, that is in fact encapsulating
-actual PyDic instance identificator (integer) with ``@`` sign and dictionary name.
+Because PyDic itself provides an word identification namespace, it does not make a big problem to handle multiple dictionaries at once.
 
 Format of identificator is: ``<pydic integer identificator>@<pydic name>``
 
 Eg. ``132@first_dictionary``
 
 
-In this way it is possible to use different words from different dictionaries in one namespace of tokens.
-
 .. warning::
 
-    You should never load dictionaries with the same names, as dictionary name should be unique in program run.
+    You should never load dictionaries with the same names, as dictionary name should be unique.
 
 ``id`` method
 -------------
@@ -37,10 +32,15 @@ In this way it is possible to use different words from different dictionaries in
 Example::
 
     >>>> dic.id(u'zamkowi')
-    ['123643@gen12', '123644@gen12', '123802@gen12']
+    [PyDicId('123643@gen12'), PyDicId('123644@gen12'), PyDicId('123802@gen12')]
 
     >>>> dic.id(u'zamek')
-    ['123643@gen12', '123644@gen12']
+    [PyDicId('123643@gen12'), PyDicId('123644@gen12')]
+
+
+.. warning::
+
+    Querying is case-insensitive.
 
 
 ``id_forms`` method
@@ -109,8 +109,7 @@ Example::
 
 .. warning::
 
-    All forms that are used as hash keys are lowercased before used. Forms that are saved in recno are in original case. This means that if you provide form vector like ``IBM:*:IBM:IBMu:IBMowi`` you need to make all queries using lowered case forms like ``ibmowi``, but as a result
-    you will get correct vector form ``[u'IBM', u'IBM', u'IBMowi']``. Quering for ``IBMowi`` will return empy result ``[]``.
+    Querying is case-insensitive.
 
 
 .. note::
@@ -148,9 +147,7 @@ Example::
 
 .. warning::
 
-    All forms that are used as hash keys are lowercased before used. Forms that are saved in recno are in original case. This means that if you provide form vector like ``IBM:*:IBM:IBMu:IBMowi`` you need to make all queries using lowered case forms like ``ibmowi``, but as a result
-    you will get correct vector form ``[u'IBM', u'IBM', u'IBMowi']``. Quering for ``IBMowi`` will return empy result ``[]``.
-
+    Querying is case-insensitive.
 
 .. warning::
 

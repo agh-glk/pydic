@@ -15,7 +15,8 @@ Contents:
    PyDicCreator
    PyDic
    PyDicManager
-
+   PyDicId
+   PyDicStemmer
 
 Indices and tables
 ==================

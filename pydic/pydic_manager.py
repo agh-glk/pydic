@@ -9,6 +9,8 @@ def require_valid_pydic_id(method):
         else:
             pydic_id = PyDicId(pydic_id)
         return method(self, pydic_id)
+    decorated.__doc__ = method.__doc__
+    decorated.__repr__ = method.__repr__
     return decorated
 
 class PyDicManager(object):
