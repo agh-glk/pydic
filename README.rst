@@ -19,3 +19,8 @@ and Marisa Trie data structures. Dictionaries can be easily build with provided
 tools from raw UTF-8 text files in simple format.
 
 PyDic supports using multiple different dictionaries at the same time.
+
+Documentation
+-------------
+
+https://pydic.readthedocs.org/en/latest/index.html
