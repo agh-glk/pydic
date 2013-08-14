@@ -1,10 +1,14 @@
+from cStringIO import StringIO
 from collections import OrderedDict
 from itertools import imap
+from mmap import mmap
 import os
+import struct
 import sys
-from bsddb3 import db
 from accents import AccentsTable, Accents
-from pydic import NAME_FILENAME, FORMS_HASH_FILENAME, FORMS_RECNO_FILENAME, ConfigurationErrorException
+from pydic import NAME_FILENAME, FORMS_HASH_FILENAME, FORMS_RECNO_FILENAME, ConfigurationErrorException, FORMS_RECNO_INDEX_FILENAME
+
+import marisa_trie
 
 
 class PyDicId(object):
@@ -50,7 +54,6 @@ class PyDicId(object):
 
 
 def require_valid_pydic_id(method):
-    # do something that requires view's class
     def decorated(self, pydic_id):
         if type(pydic_id) == PyDicId:
             if not pydic_id.dict == self.name:
@@ -72,6 +75,8 @@ class PyDic(object):
     """
     Abstraction layer for accessing single dictionary
     """
+    RECNO_INDEX_FMT = '<L'
+    MARISA_HASH_FMT = '<L'
     DIR_EXTENSION = 'pydic'
     INTERNAL_DELIMITER = ':'
 
@@ -85,9 +90,10 @@ class PyDic(object):
             raise RuntimeError("Wrong pydic input resource")
         self.accents = Accents()
 
+        self.memory_recno = ''
 
     def __iter__(self):
-        return imap(lambda i: PyDicId(i, self.name), xrange(1, len(self.recno) + 1))
+        return imap(lambda i: PyDicId(i, self.name), xrange(1, self.recno_size + 1))
 
     def is_inmemory(self):
         """
@@ -112,9 +118,8 @@ class PyDic(object):
         :return: list of PyDicId or empty list
         """
         try:
-            return map(lambda x: PyDicId(int(x), self.name),
-                       self.hash[form.lower().encode('utf-8')].split(
-                           PyDic.INTERNAL_DELIMITER))
+            return map(lambda x: PyDicId(x[0], self.name),
+                       self.hash[form.lower()])
         except KeyError:
             return []
 
@@ -127,7 +132,7 @@ class PyDic(object):
         :return: list of PyDicId or empty list
         """
         ids = set(self.id(form))
-        for w in self.accents.make_accents(form.lower()):
+        for w in self.accents.make_accents(form):
             ids.update(self.id(w))
         return list(ids)
 
@@ -140,10 +145,23 @@ class PyDic(object):
         :type pydic_id: PyDicId, string
         :return: list of unicode strings or empty list
         """
-        try:
-            return self.__decode_form(self.recno[pydic_id.id].decode('utf-8'))
-        except KeyError:
-            return []
+        if self.is_inmemory():
+            try:
+                offset = self.recno_index[pydic_id.id-1]
+            except IndexError:
+                return []
+        else:
+            try:
+                self.recno_index.seek(
+                    (pydic_id.id - 1) * struct.calcsize(PyDic.RECNO_INDEX_FMT))
+                offset = struct.unpack(PyDic.RECNO_INDEX_FMT, self.recno_index.read(
+                    struct.calcsize(PyDic.RECNO_INDEX_FMT)))[0]
+            except ValueError:
+                return []
+
+        self.recno.seek(offset)
+        return self.__decode_form(self.recno.readline().rstrip().decode('utf-8'))
+
 
     def word_forms(self, form):
         """
@@ -190,8 +208,8 @@ class PyDic(object):
         """
 
         try:
-            return self.__decode_form(self.recno[pydic_id.id].decode('utf-8'))[0]
-        except KeyError:
+            return self.id_forms(pydic_id)[0]
+        except IndexError:
             return None
 
     def word_base(self, form):
@@ -218,37 +236,36 @@ class PyDic(object):
 
     def read_pydic_index(self, dic_path):
         self.dic_path = dic_path
-        self.name = open(
-            os.path.join(self.dic_path, NAME_FILENAME)).read().strip()
-        self.hash = db.DB()
-        self.hash.open(os.path.join(self.dic_path, FORMS_HASH_FILENAME),
-                       dbtype=db.DB_HASH)
 
-        self.recno = db.DB()
-        self.recno.open(os.path.join(self.dic_path, FORMS_RECNO_FILENAME),
-                        dbtype=db.DB_RECNO)
+        self.name = open(self.get_path(NAME_FILENAME)).read().strip()
+        self.hash = marisa_trie.RecordTrie(PyDic.MARISA_HASH_FMT)
+        self.hash.load(self.get_path(FORMS_HASH_FILENAME))
+
+        recno_file = open(self.get_path(FORMS_RECNO_FILENAME), 'r+b')
+        recno_index_file = open(self.get_path(FORMS_RECNO_INDEX_FILENAME), 'r+b')
+        self.recno = mmap(recno_file.fileno(), 0)
+        self.recno_index = mmap(recno_index_file.fileno(), 0)
+        self.recno_size = self.recno_index.size() / struct.calcsize(
+            PyDic.RECNO_INDEX_FMT)
 
 
     def make_memory_pydic_index(self, from_source, name=None, delimiter=',',
                                 verbose=False):
-        self.hash, self.recno = PyDic.make_pydic_index(from_source=open(from_source),
-                                                       to_path=None,
-                                                       name=name,
-                                                       delimiter=delimiter,
-                                                       verbose=verbose)
+        self.hash, self.recno, self.recno_index = PyDic.make_pydic_index(
+            from_source=open(from_source),
+            to_path=None,
+            name=name,
+            delimiter=delimiter,
+            verbose=verbose)
 
         self.name = from_source
-
+        self.recno_size = len(self.recno_index)
 
     @staticmethod
     def make_pydic_index(from_source, to_path, name, delimiter=',', verbose=False):
 
 
-        if to_path is not None and (
-                    os.path.exists(
-                            os.path.join(to_path, NAME_FILENAME)) or os.path.exists(
-                        os.path.join(to_path, NAME_FILENAME)) or os.path.exists(
-                    os.path.join(to_path, NAME_FILENAME))):
+        if to_path is not None and os.path.exists(os.path.join(to_path, NAME_FILENAME)):
             raise ConfigurationErrorException(
                 'Cowardly refusing to create dictionary in non empty directory')
 
@@ -256,41 +273,59 @@ class PyDic(object):
             os.makedirs(to_path)
 
         if to_path is not None:
-            name_file = open(os.path.join(to_path, NAME_FILENAME), 'w')
+            name_file = open(os.path.join(to_path, NAME_FILENAME), 'w+')
             name_file.write(name.encode('utf-8') + '\n')
             name_file.close()
 
-        dbhash = db.DB()
-        dbrecno = db.DB()
+        recno = StringIO()
+        recno_index = []
         if to_path is not None:
-            dbhash.open(os.path.join(to_path, FORMS_HASH_FILENAME), dbtype=db.DB_HASH,
-                        flags=db.DB_CREATE)
-            dbrecno.open(os.path.join(to_path, FORMS_RECNO_FILENAME), dbtype=db.DB_RECNO,
-                         flags=db.DB_CREATE)
-        else:
-            dbhash.open(None, dbtype=db.DB_HASH, flags=db.DB_CREATE)
-            dbrecno.open(None, dbtype=db.DB_RECNO, flags=db.DB_CREATE)
+            recno = open(os.path.join(to_path, FORMS_RECNO_FILENAME), 'w+b')
+            recno_index = open(os.path.join(to_path, FORMS_RECNO_INDEX_FILENAME), 'w+b')
 
-        for line in from_source:
-            bits = line.split(delimiter)
-            bits = map(lambda x: x.strip().decode('utf-8'), bits)
-            bits = filter(lambda x: x, bits)
-            if bits:
-                bits = OrderedDict.fromkeys(bits).keys() # stable unique
-                bits_prefixed = PyDic.common_prefix(bits)
-                wid = dbrecno.append(
-                    (PyDic.INTERNAL_DELIMITER.join(bits_prefixed)).encode('utf-8'))
-                if verbose:
-                    print >> sys.stderr, "[", wid, "]", bits[0]
+        def get_next_form(recno, recno_index, ):
 
-                for bit in set(bits):
-                    form = bit.lower().encode('utf-8')
-                    try:
-                        dbhash[form] = "%s:%s" % (dbhash[form], str(wid))
-                    except KeyError:
-                        dbhash[form] = str(wid)
+            file_offset = 0
+            recno_counter = 0
 
-        return dbhash, dbrecno
+            for line in from_source:
+                bits = line.split(delimiter)
+                bits = map(lambda x: x.strip().decode('utf-8'), bits)
+                bits = filter(lambda x: x, bits)
+                if bits:
+                    recno_counter += 1
+
+                    bits = OrderedDict.fromkeys(bits).keys() # stable unique
+                    bits_prefixed = PyDic.common_prefix(bits)
+
+                    bits_str = (PyDic.INTERNAL_DELIMITER.join(bits_prefixed)).encode(
+                        'utf-8') + '\n'
+
+                    recno.write(bits_str)
+
+                    if to_path is None:
+                        recno_index.append(file_offset)
+                    else:
+
+                        recno_index.write(
+                            struct.pack(PyDic.RECNO_INDEX_FMT, file_offset))
+
+                    if verbose:
+                        print >> sys.stderr, "[", recno_counter, "]", bits[0]
+
+                    for bit in bits:
+                        yield bit.lower(), (recno_counter, )
+                    file_offset += len(bits_str)
+
+            raise StopIteration
+
+        forms_index = marisa_trie.RecordTrie(PyDic.MARISA_HASH_FMT,
+                                             get_next_form(recno, recno_index
+                                                           ))
+        if to_path is not None:
+            forms_index.save(os.path.join(to_path, FORMS_HASH_FILENAME))
+
+        return forms_index, recno, recno_index
 
     @staticmethod
     def common_prefix(word_list):

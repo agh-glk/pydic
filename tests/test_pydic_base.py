@@ -59,10 +59,13 @@ class TestPyDicBase(unittest.TestCase):
         PyDicCreator().generate(self.dict1_file, self.temp_dict1_path, 'dict1',
                                 verbose=False)
 
+        self.dict1 = PyDic(self.temp_dict1_path)
+        self.dict1m = PyDic('dict1.txt')
+
         return super(TestPyDicBase, self).__init__(methodName)
 
-    def setUp(self):
-        self.dict1 = PyDic(self.temp_dict1_path)
+    # def setUp(self):
+
 
     def test_file_load(self):
         dict1 = PyDic('dict1.txt')
@@ -75,6 +78,7 @@ class TestPyDicBase(unittest.TestCase):
 
     def test_name(self):
         self.assertEquals(self.dict1.name, 'dict1')
+        self.assertEquals(self.dict1m.name, 'dict1.txt')
 
     def test_id(self):
         self.assertEquals(self.dict1.id(u'kotem'), ['1@dict1'])
@@ -84,8 +88,17 @@ class TestPyDicBase(unittest.TestCase):
         self.assertEquals(self.dict1.id(u'piloty'), ['11@dict1', '12@dict1'])
         self.assertEquals(self.dict1.id(u'piloci'), ['10@dict1'])
 
+        self.assertEquals(self.dict1m.id(u'kotem'), ['1@dict1.txt'])
+        self.assertEquals(self.dict1m.id(u'utrafieniu'), ['7@dict1.txt'])
+        self.assertEquals(self.dict1m.id(u'pszczoły'), ['4@dict1.txt'])
+        self.assertEquals(self.dict1m.id(u'spodniami'), ['3@dict1.txt'])
+        self.assertEquals(self.dict1m.id(u'piloty'), ['11@dict1.txt', '12@dict1.txt'])
+        self.assertEquals(self.dict1m.id(u'piloci'), ['10@dict1.txt'])
+
     def test_a_id(self):
         self.assertEquals(self.dict1.a_id(u'pszczoly'), ['4@dict1'])
+
+        self.assertEquals(self.dict1m.a_id(u'pszczoly'), ['4@dict1.txt'])
 
 
     def test_id_forms(self):
@@ -100,6 +113,19 @@ class TestPyDicBase(unittest.TestCase):
         self.assertEquals(self.dict1.id_forms(PyDicId('30000@dict1')), [])
 
 
+        self.assertEquals(self.dict1m.id_forms(PyDicId('4@dict1.txt')),
+                          [u"pszczoła", u"pszczoły", u"pszczole", u"pszczołę",
+                           u"pszczołą", u"pszczoło",
+                           u"pszczół", u"pszczołom", u"pszczołami",
+                           u"pszczołach", ])
+        self.assertEquals(self.dict1m.id_forms(PyDicId('3@dict1.txt')),
+                          [u"spodnie", u"spodni", u"spodniom", u"spodniami",
+                           u"spodniach", ])
+        self.assertEquals(self.dict1m.id_forms(PyDicId('30000@dict1.txt')), [])
+
+
+
+
     def test_word_forms(self):
         self.assertEquals(self.dict1.word_forms(u"pszczołę"), [
             [u"pszczoła", u"pszczoły", u"pszczole", u"pszczołę",
@@ -111,6 +137,20 @@ class TestPyDicBase(unittest.TestCase):
             ]])
         self.assertEquals(self.dict1.word_forms(u"spodniachhhhhhhh"), [])
 
+
+        self.assertEquals(self.dict1m.word_forms(u"pszczołę"), [
+            [u"pszczoła", u"pszczoły", u"pszczole", u"pszczołę",
+             u"pszczołą", u"pszczoło",
+             u"pszczół", u"pszczołom", u"pszczołami",
+             u"pszczołach", ]])
+        self.assertEquals(self.dict1m.word_forms(u"spodniach"), [
+            [u"spodnie", u"spodni", u"spodniom", u"spodniami", u"spodniach",
+            ]])
+        self.assertEquals(self.dict1m.word_forms(u"spodniachhhhhhhh"), [])
+
+
+
+
     def test_a_word_forms(self):
         self.assertEquals(self.dict1.a_word_forms(u"pszczole"), [
             [u"pszczoła", u"pszczoły", u"pszczole", u"pszczołę", u"pszczołą",
@@ -121,11 +161,33 @@ class TestPyDicBase(unittest.TestCase):
             ]])
         self.assertEquals(self.dict1.a_word_forms(u"spodniachhhhhhhh"), [])
 
+        self.assertEquals(self.dict1m.a_word_forms(u"pszczole"), [
+            [u"pszczoła", u"pszczoły", u"pszczole", u"pszczołę", u"pszczołą",
+             u"pszczoło", u"pszczół", u"pszczołom",
+             u"pszczołami", u"pszczołach", ]])
+        self.assertEquals(self.dict1m.a_word_forms(u"spodniach"), [
+            [u"spodnie", u"spodni", u"spodniom", u"spodniami", u"spodniach",
+            ]])
+        self.assertEquals(self.dict1m.a_word_forms(u"spodniachhhhhhhh"), [])
+
 
     def test_empty_label_word_forms(self):
         self.assertEquals(self.dict1.word_forms(u"abakusem"), [
             [u"abakus", u"abakusa", u"abakusach", u"abakusami", u"abakusem", u"abakusie",
              u"abakusom", u"abakusowi", u"abakusów", u"abakusy"]])
+
+        self.assertEquals(self.dict1m.word_forms(u"abakusem"), [
+            [u"abakus", u"abakusa", u"abakusach", u"abakusami", u"abakusem", u"abakusie",
+             u"abakusom", u"abakusowi", u"abakusów", u"abakusy"]])
+
+    def test_dic_name(self):
+        self.assertEquals(self.dict1.name, u"dict1")
+        self.assertEquals(self.dict1m.name, u"dict1.txt")
+
+    def test_dic_size(self):
+        self.assertEquals(self.dict1.recno_size, 17)
+        self.assertEquals(self.dict1m.recno_size, 17)
+
 
     def test_id_base(self):
         self.assertEquals(self.dict1.id_base(PyDicId('2@dict1')), u"pies")

@@ -6,6 +6,7 @@ class ConfigurationErrorException(Exception):
 NAME_FILENAME = '.pydic'
 FORMS_HASH_FILENAME = 'forms.hash'
 FORMS_RECNO_FILENAME = 'forms.recno'
+FORMS_RECNO_INDEX_FILENAME = 'forms.recno.index'
 
 
 from accents import Accents

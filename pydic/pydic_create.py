@@ -51,14 +51,11 @@ class PyDicCreator(object):
 
     def generate(self, from_source, to_path, name, delimiter=',', verbose=False):
 
-        dbhash, dbrecno = PyDic.make_pydic_index(from_source=from_source,
-                                                 to_path=to_path,
-                                                 name=name,
-                                                 delimiter=delimiter,
-                                                 verbose=verbose)
-
-        dbhash.close()
-        dbrecno.close()
+        PyDic.make_pydic_index(from_source=from_source,
+                               to_path=to_path,
+                               name=name,
+                               delimiter=delimiter,
+                               verbose=verbose)
 
 
 if __name__ == '__main__':
