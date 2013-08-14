@@ -1,6 +1,13 @@
 pydic
 =====
 
+
+.. image:: https://travis-ci.org/agh-glk/pydic.png?branch=master
+   :target: https://travis-ci.org/agh-glk/pydic
+.. image:: https://coveralls.io/repos/agh-glk/pydic/badge.png?branch=master
+   :target: https://coveralls.io/r/agh-glk/pydic?branch=master
+
+
 Python simple text inflectional dictionaries library
 
 About
