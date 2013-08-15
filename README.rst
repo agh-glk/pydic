@@ -8,7 +8,7 @@ pydic
    :target: https://coveralls.io/r/agh-glk/pydic?branch=master
 
 
-Python simple text inflectional dictionaries library
+Python toolkit for managing simple inflectional dictionaries
 
 About
 -----
