@@ -184,9 +184,9 @@ class TestPyDicBase(unittest.TestCase):
         self.assertEquals(self.dict1.name, u"dict1")
         self.assertEquals(self.dict1m.name, u"dict1.txt")
 
-    def test_dic_size(self):
-        self.assertEquals(self.dict1.recno_size, 17)
-        self.assertEquals(self.dict1m.recno_size, 17)
+    def test_dic_len(self):
+        self.assertEquals(len(self.dict1), 17)
+        self.assertEquals(len(self.dict1m), 17)
 
 
     def test_id_base(self):

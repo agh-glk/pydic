@@ -93,7 +93,10 @@ class PyDic(object):
         self.memory_recno = ''
 
     def __iter__(self):
-        return imap(lambda i: PyDicId(i, self.name), xrange(1, self.recno_size + 1))
+        return imap(lambda i: PyDicId(i, self.name), xrange(1, len(self) + 1))
+
+    def __len__(self):
+        return self.recno_size
 
     def is_inmemory(self):
         """
