@@ -1,4 +1,5 @@
 from pydic import PyDic, PyDicId
+from accents import AccentsTable, Accents
 
 
 def require_valid_pydic_id(method):
@@ -96,3 +97,41 @@ class PyDicManager(object):
         :return: unique list of forms as unicode
         """
         return list(set(map(lambda x: self.id_base(x), self.id(word))))
+        
+    def a_id(self, word):
+        """
+        Accents agnostic version of method ``id()``
+
+        :param form: form
+        :type form: unicode
+        :return: list of PyDicId or empty list
+        """
+        result = []
+        for dic_name in self.dictionaries.keys():
+            result += self.dictionaries[dic_name].a_id(word)
+        return result
+        
+    def a_word_forms(self, form, mapping=AccentsTable.PL):
+        """
+        Accent agnostic version of word_forms method.
+
+        :param form: word form
+        :type form: unicode
+        :return: list of lists of unicode strings or empty list
+        """
+        result = set()
+        for dic_name in self.dictionaries.keys():
+            for vector in self.dictionaries[dic_name].a_word_forms(form):
+                result.add(tuple(vector))
+        return filter(lambda x: len(x), result)
+    
+    def a_word_base(self, form):
+        """
+        Accents agnostic version of ``word_base()`` method
+
+        :param form: word form
+        :type form: unicode string
+        :return: list of unicode strings or empty list
+        """
+        return list(set(map(lambda x: self.id_base(x), self.a_id(form))))
+        

@@ -66,7 +66,28 @@ class TestPyDicManager(unittest.TestCase):
         self.assertEquals(self.dict.word_base(u'pilotemmmmmm'), [])
         self.assertEquals(set(self.dict.word_base(u'płaszcz')),
                           set([u"płaszczyć", u"płaszcz"]))
+                          
+    def test_a_id(self):
+		self.assertEquals(self.dict.a_id(u'pszczola'),[u"4@dict1"])
+		self.assertEquals(self.dict.a_id(u'psow'), [u"2@dict1",u"7@dict2"])
+		
+    def test_a_word_forms(self):
+		self.assertEquals(self.dict.a_word_forms(u'psow'), [(u"pies", u"psa", u"psu",
+                                                           u"psem", u"psie",
+                                                           u"psy", u"psów",
+                                                           u"psom", u"psami",
+                                                           u"psach",)])
 
-
+		self.assertEquals(self.dict.a_word_forms(u'pszczol'),
+                          [(u"pszczoła", u"pszczoły", u"pszczole", u"pszczołę",
+                           u"pszczołą", u"pszczoło",
+                           u"pszczół", u"pszczołom", u"pszczołami",
+                           u"pszczołach",)])
+                         
+    def test_a_word_base(self):
+    	self.assertEquals(self.dict.a_word_base(u'pszczol'),[u"pszczoła"])
+    	self.assertEquals(self.dict.a_word_base(u'autopilotow'),[u"autopilot"])
+		
     def test_pydic_id_formats(self):
         self.assertRaises(ValueError, self.dict.id_forms, 88888888)
+        
