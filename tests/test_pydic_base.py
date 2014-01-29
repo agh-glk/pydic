@@ -97,8 +97,9 @@ class TestPyDicBase(unittest.TestCase):
 
     def test_a_id(self):
         self.assertEquals(self.dict1.a_id(u'pszczoly'), ['4@dict1'])
-
+        self.assertEquals(self.dict1.a_id(u'pszczoły'), ['4@dict1'])
         self.assertEquals(self.dict1m.a_id(u'pszczoly'), ['4@dict1.txt'])
+        self.assertEquals(self.dict1m.a_id(u'pszczóly'), [])
 
 
     def test_id_forms(self):
@@ -160,6 +161,7 @@ class TestPyDicBase(unittest.TestCase):
             [u"spodnie", u"spodni", u"spodniom", u"spodniami", u"spodniach",
             ]])
         self.assertEquals(self.dict1.a_word_forms(u"spodniachhhhhhhh"), [])
+        self.assertEquals(self.dict1.a_word_forms(u"psżczola"), [])
 
         self.assertEquals(self.dict1m.a_word_forms(u"pszczole"), [
             [u"pszczoła", u"pszczoły", u"pszczole", u"pszczołę", u"pszczołą",
@@ -169,6 +171,10 @@ class TestPyDicBase(unittest.TestCase):
             [u"spodnie", u"spodni", u"spodniom", u"spodniami", u"spodniach",
             ]])
         self.assertEquals(self.dict1m.a_word_forms(u"spodniachhhhhhhh"), [])
+        self.assertEquals(self.dict1.a_word_forms(u"pszczól"), [
+            [u"pszczoła", u"pszczoły", u"pszczole", u"pszczołę", u"pszczołą",
+             u"pszczoło", u"pszczół", u"pszczołom",
+             u"pszczołami", u"pszczołach", ]])
 
 
     def test_empty_label_word_forms(self):
@@ -204,6 +210,8 @@ class TestPyDicBase(unittest.TestCase):
         self.assertEquals(self.dict1.a_word_base(u"spodniami"), [u"spodnie"])
         self.assertEquals(self.dict1.a_word_base(u"#"), [])
         self.assertEquals(self.dict1.a_word_base(u"pilotowi"), [u"pilot"])
+        self.assertEquals(self.dict1.a_word_base(u"psów"), [u"pies"])
+        self.assertEquals(self.dict1.a_word_base(u"pśow"), [])
 
 
     def test_lowercase_hash(self):
