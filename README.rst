@@ -8,7 +8,9 @@ pydic
    :target: https://coveralls.io/r/agh-glk/pydic?branch=master
 
 
-Python toolkit for managing simple inflectional dictionaries
+Python toolkit for managing simple inflectional dictionaries. 
+Inflectional dictionary can be used as a lemmatizer, e.g. Polish lemmatizer 
+can be generated using PyDic + SJP.pl free downloadable data (LGPL license). 
 
 About
 -----
